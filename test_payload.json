@@ -1,0 +1,29 @@
+{
+  "html": "<h1>Quarterly Financial Report</h1>\n<p>This report summarizes our financial performance over the first three quarters of 2026.</p>\n\n<table>\n  <thead>\n    <tr>\n      <th>Quarter</th>\n      <th>Revenue ($M)</th>\n      <th>Expenses ($M)</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>Q1</td><td>120</td><td>80</td></tr>\n    <tr><td>Q2</td><td>150</td><td>95</td></tr>\n    <tr><td>Q3</td><td>180</td><td>110</td></tr>\n  </tbody>\n</table>\n\n<h2>Revenue Trend</h2>\n<div data-chart-id=\"revenueGrowth\" data-chart-type=\"bar\" data-chart-title=\"Quarterly Revenue Trend\"></div>\n\n<h2>Revenue Distribution</h2>\n<div data-chart-id=\"revenueShare\" data-chart-type=\"pie\" data-chart-title=\"Revenue Distribution by Quarter\"></div>",
+  "charts": [
+    {
+      "chart_id": "revenueGrowth",
+      "chart_type": "bar",
+      "title": "Quarterly Revenue Trend",
+      "categories": ["Q1", "Q2", "Q3"],
+      "series": [
+        {
+          "name": "Revenue ($M)",
+          "values": [120, 150, 180]
+        }
+      ]
+    },
+    {
+      "chart_id": "revenueShare",
+      "chart_type": "pie",
+      "title": "Revenue Distribution by Quarter",
+      "categories": ["Q1", "Q2", "Q3"],
+      "series": [
+        {
+          "name": "Revenue ($M)",
+          "values": [120, 150, 180]
+        }
+      ]
+    }
+  ]
+}
