@@ -29,7 +29,7 @@ from reportkit.models.table import Table
 from reportkit.parsers.chartjs_adapter import ChartJsAdapter
 from reportkit.services.conversion import ConversionService, OutputFormat
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "Chart",

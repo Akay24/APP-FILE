@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "reportkit"
-version = "0.1.0"
+name = "reportkit-py"
+version = "0.1.1"
 description = "Convert HTML content with tables and charts to production-quality DOCX and PDF documents with native editable charts."
 readme = "README.md"
 license = "MIT"
@@ -63,11 +63,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Akay24/reportkit"
-Documentation = "https://github.com/Akay24/reportkit#readme"
-Repository = "https://github.com/Akay24/reportkit"
-Issues = "https://github.com/Akay24/reportkit/issues"
-Changelog = "https://github.com/Akay24/reportkit/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/Akay24/reportkit-py"
+Documentation = "https://github.com/Akay24/reportkit-py#readme"
+Repository = "https://github.com/Akay24/reportkit-py"
+Issues = "https://github.com/Akay24/reportkit-py/issues"
+Changelog = "https://github.com/Akay24/reportkit-py/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/reportkit"]
