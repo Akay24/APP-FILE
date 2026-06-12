@@ -13,6 +13,7 @@ import zipfile
 from typing import Any
 
 from docx import Document as WordDocument
+from docx.shared import Inches, Pt, RGBColor
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
 from pptx.enum.chart import XL_CHART_TYPE as PPTX_XL_CHART_TYPE
@@ -67,6 +68,44 @@ class DocxRenderer:
             RenderingError: If chart injection fails.
         """
         doc = WordDocument()
+
+        # Configure page layout (A4 with 0.75-inch margins) to match PDF
+        section = doc.sections[0]
+        section.page_width = Inches(8.27)
+        section.page_height = Inches(11.69)
+        section.left_margin = Inches(0.75)
+        section.right_margin = Inches(0.75)
+        section.top_margin = Inches(0.75)
+        section.bottom_margin = Inches(0.75)
+
+        # Set default font style (Arial, 10.5pt, charcoal gray) to match PDF
+        normal_style = doc.styles["Normal"]
+        font = normal_style.font
+        font.name = "Arial"
+        font.size = Pt(10.5)
+        font.color.rgb = RGBColor(51, 51, 51)
+
+        # Style Headings to match PDF's Helvetica styling
+        for level in _HEADING_LEVELS.values():
+            style_name = f"Heading {level}"
+            if style_name in doc.styles:
+                heading_style = doc.styles[style_name]
+                h_font = heading_style.font
+                h_font.name = "Arial"
+                h_font.bold = True
+                if level == 1:
+                    h_font.size = Pt(22)
+                    h_font.color.rgb = RGBColor(38, 68, 120)  # Hex #264478
+                elif level == 2:
+                    h_font.size = Pt(18)
+                    h_font.color.rgb = RGBColor(68, 114, 196)  # Hex #4472C4
+                elif level == 3:
+                    h_font.size = Pt(14)
+                    h_font.color.rgb = RGBColor(68, 114, 196)
+                else:
+                    h_font.size = Pt(12)
+                    h_font.color.rgb = RGBColor(51, 51, 51)
+
         charts_to_inject: list[Chart] = []
 
         for element in document.elements:
@@ -94,21 +133,89 @@ class DocxRenderer:
 
     @staticmethod
     def _render_table(doc: Any, table_model: Table) -> None:
-        """Add a table to the Word document."""
-        if not table_model.headers:
+        """Add a styled table to the Word document matching the PDF theme."""
+        if not table_model.headers and not table_model.rows:
             return
 
-        row_count = len(table_model.rows) + 1
-        col_count = len(table_model.headers)
+        row_count = len(table_model.rows)
+        if table_model.headers:
+            row_count += 1
+        col_count = (
+            len(table_model.headers)
+            if table_model.headers
+            else (len(table_model.rows[0]) if table_model.rows else 0)
+        )
+        if col_count == 0:
+            return
+
         table = doc.add_table(rows=row_count, cols=col_count)
         table.style = "Table Grid"
 
-        for col, header in enumerate(table_model.headers):
-            table.cell(0, col).text = header
+        current_row = 0
 
+        # Render headers (White text on Medium Blue background)
+        if table_model.headers:
+            for col_idx, header in enumerate(table_model.headers):
+                cell = table.cell(current_row, col_idx)
+                DocxRenderer._set_cell_style(cell, header, is_header=True)
+            current_row += 1
+
+        # Render rows (Alternating light gray background)
         for row_idx, row in enumerate(table_model.rows):
+            is_alternate = row_idx % 2 == 1
             for col_idx, value in enumerate(row):
-                table.cell(row_idx + 1, col_idx).text = value
+                if col_idx < col_count:
+                    cell = table.cell(current_row, col_idx)
+                    DocxRenderer._set_cell_style(
+                        cell, value, is_header=False, is_alternate=is_alternate
+                    )
+            current_row += 1
+
+    @staticmethod
+    def _set_cell_style(
+        cell: Any,
+        text: str,
+        is_header: bool = False,
+        is_alternate: bool = False,
+    ) -> None:
+        """Apply shading and font styling to a cell to match the PDF design system."""
+        # 1. Shading
+        if is_header:
+            DocxRenderer._set_cell_shading(cell, "4472C4")  # Medium Blue (#4472C4)
+        elif is_alternate:
+            DocxRenderer._set_cell_shading(cell, "F2F2F2")  # Light Gray (#F2F2F2)
+
+        # 2. Text styling & margins
+        if not cell.paragraphs:
+            p = cell.add_paragraph()
+        else:
+            p = cell.paragraphs[0]
+            p.text = ""
+
+        p.paragraph_format.space_before = Pt(4)
+        p.paragraph_format.space_after = Pt(4)
+        p.paragraph_format.line_spacing = 1.15
+
+        run = p.add_run(text)
+        run.font.name = "Arial"
+
+        if is_header:
+            run.font.size = Pt(10)
+            run.font.bold = True
+            run.font.color.rgb = RGBColor(255, 255, 255)  # White
+        else:
+            run.font.size = Pt(9.5)
+            run.font.bold = False
+            run.font.color.rgb = RGBColor(51, 51, 51)  # Charcoal
+
+    @staticmethod
+    def _set_cell_shading(cell: Any, hex_color: str) -> None:
+        """Set cell background color via OpenXML shading."""
+        from docx.oxml import parse_xml
+        from docx.oxml.ns import nsdecls
+
+        shading_elm = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hex_color}"/>')
+        cell._tc.get_or_add_tcPr().append(shading_elm)
 
     @staticmethod
     def _inject_native_charts(

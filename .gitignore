@@ -38,6 +38,7 @@ htmlcov/
 
 # Generated output files
 *.docx
+*.pdf
 *.xlsx
 *.pptx
 !examples/*.docx

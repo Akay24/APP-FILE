@@ -8,6 +8,9 @@ from __future__ import annotations
 
 import logging
 import os
+import shutil
+import subprocess
+import sys
 import tempfile
 from enum import Enum
 from typing import Any
@@ -66,7 +69,28 @@ class ConversionService:
             document = HtmlParser.parse(html, charts_data)
 
             if output_format == OutputFormat.PDF:
-                PdfRenderer.render(document, output_path)
+                # Try high-fidelity DOCX-to-PDF conversion first
+                rendered_via_docx = False
+                if ConversionService._has_docx_to_pdf_converter():
+                    temp_docx = ConversionService.create_temp_output("docx")
+                    try:
+                        # 1. Render to temporary DOCX
+                        DocxRenderer.render(document, temp_docx)
+                        # 2. Convert DOCX to PDF
+                        ConversionService._convert_docx_to_pdf(temp_docx, output_path)
+                        rendered_via_docx = True
+                    except Exception as e:
+                        logger.warning(
+                            "Failed to convert PDF via DOCX: %s. Falling back to ReportLab.",
+                            e,
+                        )
+                    finally:
+                        if os.path.exists(temp_docx):
+                            os.remove(temp_docx)
+
+                if not rendered_via_docx:
+                    # Fallback to pure-Python ReportLab renderer
+                    PdfRenderer.render(document, output_path)
             else:
                 DocxRenderer.render(document, output_path)
 
@@ -149,3 +173,108 @@ class ConversionService:
         )
         os.close(fd)
         return path
+
+    @staticmethod
+    def _has_docx_to_pdf_converter() -> bool:
+        """Check if an external DOCX-to-PDF converter is available in the environment."""
+        # 1. Check LibreOffice
+        if shutil.which("soffice") or shutil.which("libreoffice"):
+            return True
+
+        # 2. Check macOS Apple Pages
+        if sys.platform == "darwin":
+            try:
+                res = subprocess.run(
+                    ["osascript", "-e", 'id of application "Pages"'],
+                    capture_output=True,
+                    text=True,
+                )
+                if res.returncode == 0 and "com.apple.Pages" in res.stdout:
+                    return True
+            except Exception:
+                pass
+
+        # 3. Check docx2pdf / MS Word (if installed)
+        try:
+            import docx2pdf  # noqa: F401
+            if sys.platform == "darwin":
+                res = subprocess.run(
+                    ["osascript", "-e", 'id of application "Microsoft Word"'],
+                    capture_output=True,
+                    text=True,
+                )
+                if res.returncode == 0:
+                    return True
+            elif sys.platform == "win32":
+                return True
+        except ImportError:
+            pass
+
+        return False
+
+    @staticmethod
+    def _convert_docx_to_pdf(docx_path: str, pdf_path: str) -> None:
+        """Convert a DOCX file to PDF using the first available high-fidelity converter."""
+        abs_docx = os.path.abspath(docx_path)
+        abs_pdf = os.path.abspath(pdf_path)
+
+        # 1. Try LibreOffice
+        soffice = shutil.which("soffice") or shutil.which("libreoffice")
+        if soffice:
+            logger.info("Converting DOCX to PDF via LibreOffice...")
+            outdir = os.path.dirname(abs_pdf)
+            cmd = [
+                soffice,
+                "--headless",
+                "--convert-to",
+                "pdf",
+                "--outdir",
+                outdir,
+                abs_docx,
+            ]
+            subprocess.run(cmd, check=True, capture_output=True)
+            basename = os.path.splitext(os.path.basename(abs_docx))[0]
+            generated_pdf = os.path.join(outdir, f"{basename}.pdf")
+            if os.path.exists(generated_pdf) and generated_pdf != abs_pdf:
+                if os.path.exists(abs_pdf):
+                    os.remove(abs_pdf)
+                os.rename(generated_pdf, abs_pdf)
+            return
+
+        # 2. Try macOS Apple Pages
+        if sys.platform == "darwin":
+            try:
+                res = subprocess.run(
+                    ["osascript", "-e", 'id of application "Pages"'],
+                    capture_output=True,
+                    text=True,
+                )
+                if res.returncode == 0 and "com.apple.Pages" in res.stdout:
+                    logger.info("Converting DOCX to PDF via Apple Pages...")
+                    applescript = f'''
+                    tell application "Pages"
+                        set theDoc to open POSIX file "{abs_docx}"
+                        export theDoc to POSIX file "{abs_pdf}" as PDF
+                        close theDoc saving no
+                    end tell
+                    '''
+                    subprocess.run(
+                        ["osascript", "-e", applescript],
+                        capture_output=True,
+                        text=True,
+                        check=True,
+                    )
+                    return
+            except Exception as e:
+                logger.debug("Pages conversion failed: %s", e)
+
+        # 3. Try docx2pdf / Microsoft Word
+        try:
+            import docx2pdf
+            logger.info("Converting DOCX to PDF via Microsoft Word (docx2pdf)...")
+            docx2pdf.convert(abs_docx, abs_pdf)
+            return
+        except Exception as e:
+            logger.debug("docx2pdf conversion failed: %s", e)
+
+        raise RuntimeError("No available DOCX to PDF converter could perform the task.")
