@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from html2docx.models.document import Document, Paragraph
 from html2docx.parsers.chart_parser import ChartParser
@@ -52,7 +52,10 @@ class HtmlParser:
         body = soup.body if soup.body is not None else soup
 
         for element in body.children:
-            tag_name = getattr(element, "name", None)
+            if not isinstance(element, Tag):
+                continue
+
+            tag_name = element.name
             if tag_name is None:
                 continue
 

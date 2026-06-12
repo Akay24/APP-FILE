@@ -11,10 +11,10 @@ import logging
 import tempfile
 from typing import Any
 
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.figure import Figure
+import matplotlib  # type: ignore[import-untyped]
+import matplotlib.pyplot as plt  # type: ignore[import-untyped]
+import numpy as np  # type: ignore[import-untyped]
+from matplotlib.figure import Figure  # type: ignore[import-untyped]
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet

@@ -10,6 +10,7 @@ import logging
 import os
 import tempfile
 import zipfile
+from typing import Any
 
 from docx import Document as WordDocument
 from pptx import Presentation
@@ -83,7 +84,7 @@ class DocxRenderer:
             DocxRenderer._inject_native_charts(output_path, charts_to_inject)
 
     @staticmethod
-    def _render_paragraph(doc: WordDocument, paragraph: Paragraph) -> None:
+    def _render_paragraph(doc: Any, paragraph: Paragraph) -> None:
         """Add a heading or paragraph to the Word document."""
         level = _HEADING_LEVELS.get(paragraph.tag)
         if level is not None:
@@ -92,7 +93,7 @@ class DocxRenderer:
             doc.add_paragraph(paragraph.text)
 
     @staticmethod
-    def _render_table(doc: WordDocument, table_model: Table) -> None:
+    def _render_table(doc: Any, table_model: Table) -> None:
         """Add a table to the Word document."""
         if not table_model.headers:
             return
@@ -103,11 +104,11 @@ class DocxRenderer:
         table.style = "Table Grid"
 
         for col, header in enumerate(table_model.headers):
-            table.cell(0, col).text = str(header)
+            table.cell(0, col).text = header
 
         for row_idx, row in enumerate(table_model.rows):
             for col_idx, value in enumerate(row):
-                table.cell(row_idx + 1, col_idx).text = str(value)
+                table.cell(row_idx + 1, col_idx).text = value
 
     @staticmethod
     def _inject_native_charts(
