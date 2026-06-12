@@ -53,4 +53,5 @@ def _is_debug() -> bool:
 # Allow running with: python -m reportkit.app
 if __name__ == "__main__":
     application = create_app()
-    application.run(debug=_is_debug(), host="0.0.0.0", port=5000)
+    port = int(os.environ.get("REPORTKIT_PORT", os.environ.get("PORT", "8000")))
+    application.run(debug=_is_debug(), host="0.0.0.0", port=port)
