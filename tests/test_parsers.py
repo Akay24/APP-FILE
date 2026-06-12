@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from html2docx.models.chart import Chart
 from html2docx.models.document import Paragraph
@@ -10,6 +10,14 @@ from html2docx.models.table import Table
 from html2docx.parsers.chart_parser import ChartParser
 from html2docx.parsers.html_parser import HtmlParser
 from html2docx.parsers.table_parser import TableParser
+
+
+def _find_tag(html: str, name: str) -> Tag:
+    """Parse HTML and find a tag by name, asserting it exists."""
+    soup = BeautifulSoup(html, "html.parser")
+    tag = soup.find(name)
+    assert isinstance(tag, Tag), f"Expected <{name}> tag in: {html}"
+    return tag
 
 
 class TestTableParser:
@@ -22,8 +30,7 @@ class TestTableParser:
             "<tr><td>A</td><td>10</td></tr>"
             "</table>"
         )
-        soup = BeautifulSoup(html, "html.parser")
-        table = TableParser.parse(soup.find("table"))
+        table = TableParser.parse(_find_tag(html, "table"))
 
         assert table.headers == ["Name", "Value"]
         assert table.rows == [["A", "10"]]
@@ -35,24 +42,20 @@ class TestTableParser:
             "<tr><td>1</td><td>2</td></tr>"
             "</table>"
         )
-        soup = BeautifulSoup(html, "html.parser")
-        table = TableParser.parse(soup.find("table"))
+        table = TableParser.parse(_find_tag(html, "table"))
 
         assert table.headers == []
         assert len(table.rows) == 2
 
     def test_parse_empty_table(self) -> None:
-        html = "<table></table>"
-        soup = BeautifulSoup(html, "html.parser")
-        table = TableParser.parse(soup.find("table"))
+        table = TableParser.parse(_find_tag("<table></table>", "table"))
 
         assert table.headers == []
         assert table.rows == []
 
     def test_parse_table_strips_whitespace(self) -> None:
         html = "<table><tr><th>  Name  </th></tr><tr><td>  Alice  </td></tr></table>"
-        soup = BeautifulSoup(html, "html.parser")
-        table = TableParser.parse(soup.find("table"))
+        table = TableParser.parse(_find_tag(html, "table"))
 
         assert table.headers == ["Name"]
         assert table.rows == [["Alice"]]
@@ -63,8 +66,7 @@ class TestChartParser:
 
     def test_parse_chart_from_attributes(self) -> None:
         html = '<div data-chart-id="c1" data-chart-type="pie" data-chart-title="My Pie"></div>'
-        soup = BeautifulSoup(html, "html.parser")
-        chart = ChartParser.parse(soup.find("div"))
+        chart = ChartParser.parse(_find_tag(html, "div"))
 
         assert chart.chart_id == "c1"
         assert chart.chart_type == "pie"
@@ -72,7 +74,6 @@ class TestChartParser:
 
     def test_parse_chart_with_data(self) -> None:
         html = '<div data-chart-id="c2" data-chart-type="bar"></div>'
-        soup = BeautifulSoup(html, "html.parser")
 
         charts_data = {
             "c2": {
@@ -82,7 +83,7 @@ class TestChartParser:
                 "series": [{"name": "S1", "values": [1, 2]}],
             }
         }
-        chart = ChartParser.parse(soup.find("div"), charts_data)
+        chart = ChartParser.parse(_find_tag(html, "div"), charts_data)
 
         assert chart.chart_type == "line"
         assert chart.title == "Override Title"
@@ -91,8 +92,7 @@ class TestChartParser:
 
     def test_parse_chart_defaults(self) -> None:
         html = '<div data-chart-id="c3"></div>'
-        soup = BeautifulSoup(html, "html.parser")
-        chart = ChartParser.parse(soup.find("div"))
+        chart = ChartParser.parse(_find_tag(html, "div"))
 
         assert chart.chart_id == "c3"
         assert chart.chart_type == "bar"  # default
@@ -114,8 +114,10 @@ class TestHtmlParser:
     def test_parse_paragraph(self) -> None:
         doc = HtmlParser.parse("<p>Hello world</p>")
         assert len(doc.elements) == 1
-        assert doc.elements[0].tag == "p"
-        assert doc.elements[0].text == "Hello world"
+        elem = doc.elements[0]
+        assert isinstance(elem, Paragraph)
+        assert elem.tag == "p"
+        assert elem.text == "Hello world"
 
     def test_parse_table(self) -> None:
         html = "<table><tr><th>Col</th></tr><tr><td>Val</td></tr></table>"
@@ -157,4 +159,6 @@ class TestHtmlParser:
         html = "<html><body><h1>Inside Body</h1></body></html>"
         doc = HtmlParser.parse(html)
         assert len(doc.elements) == 1
-        assert doc.elements[0].text == "Inside Body"
+        elem = doc.elements[0]
+        assert isinstance(elem, Paragraph)
+        assert elem.text == "Inside Body"
