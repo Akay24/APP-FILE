@@ -45,9 +45,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      - run: pytest --cov=html2docx --cov-report=term-missing --tb=short
+      - run: pytest --cov=reportkit --cov-report=term-missing --tb=short
       - run: |
-          coverage=$(pytest --cov=html2docx --cov-report=term 2>/dev/null | grep TOTAL | awk '{print $NF}' | tr -d '%')
+          coverage=$(pytest --cov=reportkit --cov-report=term 2>/dev/null | grep TOTAL | awk '{print $NF}' | tr -d '%')
           if [ "$coverage" -lt 80 ]; then
             echo "Coverage ${coverage}% is below 80% threshold"
             exit 1

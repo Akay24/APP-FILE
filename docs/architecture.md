@@ -2,7 +2,7 @@
 
 ## System Overview
 
-html2docx-converter transforms HTML content into native Microsoft Word (.docx) and PDF documents. The system follows a **parse → model → render** pipeline architecture.
+reportkit-converter transforms HTML content into native Microsoft Word (.docx) and PDF documents. The system follows a **parse → model → render** pipeline architecture.
 
 ## Data Flow
 
@@ -35,7 +35,7 @@ HTTP Request / Library Call
 
 ## Module Responsibilities
 
-### Models (`html2docx.models`)
+### Models (`reportkit.models`)
 
 Pure data classes with no behavior:
 
@@ -43,7 +43,7 @@ Pure data classes with no behavior:
 - **`Table`**: Structured headers + rows
 - **`Document`** / **`Paragraph`**: Ordered element container
 
-### Parsers (`html2docx.parsers`)
+### Parsers (`reportkit.parsers`)
 
 Stateless parsers that convert HTML into models:
 
@@ -52,21 +52,21 @@ Stateless parsers that convert HTML into models:
 - **`ChartParser`**: Converts `<div data-chart-*>` to `Chart` models
 - **`ChartJsAdapter`**: Converts Chart.js configs to `Chart` models
 
-### Renderers (`html2docx.renderers`)
+### Renderers (`reportkit.renderers`)
 
 Convert models to output formats:
 
 - **`DocxRenderer`**: Uses python-docx for structure, python-pptx for chart XML generation, and OXmlPatcher for injection
 - **`PdfRenderer`**: Uses ReportLab for document layout and matplotlib for chart images
 
-### Services (`html2docx.services`)
+### Services (`reportkit.services`)
 
 Orchestration layer:
 
 - **`ConversionService`**: Ties parsing and rendering together
 - **`OXmlPatcher`**: Low-level ZIP/XML manipulation for DOCX chart injection
 
-### API (`html2docx.api`)
+### API (`reportkit.api`)
 
 Optional Flask REST layer:
 

@@ -1,21 +1,21 @@
-# html2docx-converter
+# reportkit
 
-> Convert HTML content with tables and charts to production-quality DOCX and PDF documents.
+> Convert HTML content with tables and charts to production-quality DOCX and PDF documents with native editable charts.
 
-[![CI](https://github.com/yourusername/html2docx-converter/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/html2docx-converter/actions)
+[![CI](https://github.com/Akay24/reportkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Akay24/reportkit/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## Overview
 
-**html2docx-converter** transforms HTML content — including headings, paragraphs, tables, and interactive charts — into native Microsoft Word (.docx) and PDF documents.
+**reportkit** transforms HTML content — including headings, paragraphs, tables, and interactive charts — into native Microsoft Word (.docx) and PDF documents.
 
 Charts are injected as **native Office charts** in DOCX (editable in Word) and as **high-quality matplotlib renders** in PDF.
 
 ### Key Features
 
 - 📄 **Dual output**: Generate both DOCX and PDF from the same HTML
-- 📊 **Native Office charts**: Bar, line, pie, doughnut, and area charts
+- 📊 **Native Office charts**: Bar, line, pie, doughnut, and area charts — **editable in Word**
 - 📋 **HTML table support**: Full header/row parsing with styled output
 - 🔌 **Chart.js integration**: Pass Chart.js configs directly from your frontend
 - 🌐 **REST API**: Optional Flask-based API for service deployment
@@ -27,20 +27,20 @@ Charts are injected as **native Office charts** in DOCX (editable in Word) and a
 ### Library only (no web server)
 
 ```bash
-pip install html2docx-converter
+pip install reportkit
 ```
 
 ### With Flask API
 
 ```bash
-pip install html2docx-converter[api]
+pip install reportkit[api]
 ```
 
 ### Development
 
 ```bash
-git clone https://github.com/yourusername/html2docx-converter.git
-cd html2docx-converter
+git clone https://github.com/Akay24/reportkit.git
+cd reportkit
 pip install -e ".[dev]"
 ```
 
@@ -49,7 +49,7 @@ pip install -e ".[dev]"
 ### As a Python Library
 
 ```python
-from html2docx import convert_html_to_docx, convert_html_to_pdf
+from reportkit import convert_html_to_docx, convert_html_to_pdf
 
 html = """
 <h1>Quarterly Report</h1>
@@ -65,7 +65,7 @@ html = """
 </table>
 """
 
-# Generate DOCX
+# Generate DOCX (charts are editable in Word!)
 convert_html_to_docx(html, "report.docx")
 
 # Generate PDF
@@ -75,7 +75,7 @@ convert_html_to_pdf(html, "report.pdf")
 ### With Charts
 
 ```python
-from html2docx import convert_html_to_docx
+from reportkit import convert_html_to_docx
 
 html = """
 <h1>Sales Report</h1>
@@ -101,7 +101,7 @@ convert_html_to_docx(html, "sales_report.docx", charts_data=charts)
 ### With Chart.js Payloads
 
 ```python
-from html2docx import ChartJsAdapter, convert_html_to_docx
+from reportkit import ChartJsAdapter, convert_html_to_docx
 
 # Adapt a Chart.js config from your frontend
 chart = ChartJsAdapter.adapt({
@@ -125,7 +125,7 @@ print(chart.chart_type)  # "bar"
 
 ```bash
 # Start the server
-HTML2DOCX_DEBUG=1 python -m html2docx.app
+REPORTKIT_DEBUG=1 python -m reportkit.app
 ```
 
 ```bash
@@ -148,7 +148,7 @@ curl -X POST http://localhost:5000/convert/pdf \
 
 | Function | Description |
 |---|---|
-| `convert_html_to_docx(html, path, charts_data=None)` | Convert HTML to DOCX |
+| `convert_html_to_docx(html, path, charts_data=None)` | Convert HTML to DOCX (editable charts) |
 | `convert_html_to_pdf(html, path, charts_data=None)` | Convert HTML to PDF |
 | `convert(html, path, format, charts_data=None)` | Convert to any format |
 
@@ -190,8 +190,8 @@ curl -X POST http://localhost:5000/convert/pdf \
 
 | Environment Variable | Default | Description |
 |---|---|---|
-| `HTML2DOCX_DEBUG` | `false` | Enable debug mode |
-| `HTML2DOCX_MAX_CONTENT_MB` | `16` | Max request body size (MB) |
+| `REPORTKIT_DEBUG` | `false` | Enable debug mode |
+| `REPORTKIT_MAX_CONTENT_MB` | `16` | Max request body size (MB) |
 
 ## Development
 
@@ -203,7 +203,7 @@ pip install -e ".[dev]"
 pytest
 
 # Run tests with coverage
-pytest --cov=html2docx --cov-report=term-missing
+pytest --cov=reportkit --cov-report=term-missing
 
 # Lint
 ruff check src/ tests/
@@ -218,8 +218,8 @@ python -m build
 ## Project Structure
 
 ```
-html2docx-converter/
-├── src/html2docx/
+reportkit/
+├── src/reportkit/
 │   ├── __init__.py          # Public API
 │   ├── app.py               # Flask factory
 │   ├── exceptions.py        # Custom exceptions

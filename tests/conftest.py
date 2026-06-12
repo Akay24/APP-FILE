@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 
@@ -33,7 +35,7 @@ def sample_html_with_chart() -> str:
 
 
 @pytest.fixture()
-def sample_charts_data() -> dict:
+def sample_charts_data() -> dict[str, Any]:
     """Chart data dict matching the chart placeholder."""
     return {
         "testChart": {
@@ -49,7 +51,7 @@ def sample_charts_data() -> dict:
 
 
 @pytest.fixture()
-def sample_chartjs_payload() -> dict:
+def sample_chartjs_payload() -> dict[str, Any]:
     """A valid Chart.js payload."""
     return {
         "chartId": "jsChart",
@@ -71,7 +73,7 @@ def sample_chartjs_payload() -> dict:
 
 
 @pytest.fixture()
-def full_payload(sample_html_with_chart: str, sample_charts_data: dict) -> dict:
+def full_payload(sample_html_with_chart: str, sample_charts_data: dict[str, Any]) -> dict[str, Any]:
     """Complete API request payload with HTML and charts."""
     return {
         "html": sample_html_with_chart,

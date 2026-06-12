@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "html2docx-converter"
+name = "reportkit"
 version = "0.1.0"
-description = "Convert HTML content with tables and charts to production-quality DOCX and PDF documents."
+description = "Convert HTML content with tables and charts to production-quality DOCX and PDF documents with native editable charts."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [
-    { name = "Your Name", email = "you@example.com" },
+    { name = "Abhijeet Mishra", email = "akayroot56@gmail.com" },
 ]
 keywords = [
     "html",
@@ -21,6 +21,8 @@ keywords = [
     "document",
     "chart",
     "report",
+    "office",
+    "reportkit",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -61,14 +63,14 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/html2docx-converter"
-Documentation = "https://github.com/yourusername/html2docx-converter#readme"
-Repository = "https://github.com/yourusername/html2docx-converter"
-Issues = "https://github.com/yourusername/html2docx-converter/issues"
-Changelog = "https://github.com/yourusername/html2docx-converter/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/Akay24/reportkit"
+Documentation = "https://github.com/Akay24/reportkit#readme"
+Repository = "https://github.com/Akay24/reportkit"
+Issues = "https://github.com/Akay24/reportkit/issues"
+Changelog = "https://github.com/Akay24/reportkit/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/html2docx"]
+packages = ["src/reportkit"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -97,7 +99,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["html2docx"]
+known-first-party = ["reportkit"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -113,5 +115,8 @@ module = [
     "openpyxl.*",
     "reportlab.*",
     "bs4.*",
+    "matplotlib.*",
+    "numpy.*",
 ]
 ignore_missing_imports = true
+disallow_untyped_calls = false

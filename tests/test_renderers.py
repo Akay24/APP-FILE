@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
-from html2docx.models.chart import Chart, Series
-from html2docx.models.document import Document, Paragraph
-from html2docx.models.table import Table
-from html2docx.renderers.docx_renderer import DocxRenderer
-from html2docx.renderers.pdf_renderer import PdfRenderer
-from html2docx.services.conversion import ConversionService, OutputFormat
+from reportkit.models.chart import Chart, Series
+from reportkit.models.document import Document, Paragraph
+from reportkit.models.table import Table
+from reportkit.renderers.docx_renderer import DocxRenderer
+from reportkit.renderers.pdf_renderer import PdfRenderer
+from reportkit.services.conversion import ConversionService, OutputFormat
 
 
 class TestDocxRenderer:
@@ -210,7 +211,7 @@ class TestConversionService:
         self,
         tmp_path: object,
         sample_html_with_chart: str,
-        sample_charts_data: dict,
+        sample_charts_data: dict[str, Any],
     ) -> None:
         path = os.path.join(str(tmp_path), "charts.docx")
         ConversionService.html_to_docx(

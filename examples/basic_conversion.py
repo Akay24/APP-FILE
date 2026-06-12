@@ -1,9 +1,9 @@
-"""Basic usage example for html2docx.
+"""Basic usage example for reportkit.
 
 Demonstrates converting HTML with tables and charts to both DOCX and PDF.
 """
 
-from html2docx import convert_html_to_docx, convert_html_to_pdf
+from reportkit import convert_html_to_docx, convert_html_to_pdf
 
 # ── HTML content with a table and chart placeholder ──────────────────────
 html = """

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from html2docx.models.chart import Chart, Series
-from html2docx.models.document import Document, Paragraph
-from html2docx.models.table import Table
+from reportkit.models.chart import Chart, Series
+from reportkit.models.document import Document, Paragraph
+from reportkit.models.table import Table
 
 
 class TestSeries:

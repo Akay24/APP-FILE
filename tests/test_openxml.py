@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 import pytest
 
-from html2docx.exceptions import RenderingError, ValidationError
-from html2docx.models.chart import Chart, Series
-from html2docx.renderers._excel_utils import index_to_column
-from html2docx.renderers.office_chart_renderer import OfficeChartRenderer
-from html2docx.services.openxml_patcher import OXmlPatcher
+from reportkit.exceptions import RenderingError, ValidationError
+from reportkit.models.chart import Chart, Series
+from reportkit.renderers._excel_utils import index_to_column
+from reportkit.renderers.office_chart_renderer import OfficeChartRenderer
+from reportkit.services.openxml_patcher import OXmlPatcher
 
 
 class TestIndexToColumn:
@@ -40,8 +41,8 @@ class TestIndexToColumn:
 class TestOfficeChartRenderer:
     """Tests for OfficeChartRenderer workbook generation."""
 
-    def _make_chart(self, **kwargs) -> Chart:
-        defaults = {
+    def _make_chart(self, **kwargs: Any) -> Chart:
+        defaults: dict[str, Any] = {
             "chart_id": "test",
             "chart_type": "bar",
             "title": "Test",
@@ -49,7 +50,13 @@ class TestOfficeChartRenderer:
             "series": [Series(name="S1", values=[10.0, 20.0])],
         }
         defaults.update(kwargs)
-        return Chart(**defaults)
+        return Chart(
+            chart_id=defaults["chart_id"],
+            chart_type=defaults["chart_type"],
+            title=defaults["title"],
+            categories=defaults["categories"],
+            series=defaults["series"],
+        )
 
     def test_create_workbook(self, tmp_path: object) -> None:
         path = os.path.join(str(tmp_path), "chart.xlsx")
@@ -106,8 +113,8 @@ class TestOXmlPatcher:
         """Empty chart_files should be a no-op."""
         path = os.path.join(str(tmp_path), "test.docx")
         # Create a minimal docx first
-        from html2docx.models.document import Document
-        from html2docx.renderers.docx_renderer import DocxRenderer
+        from reportkit.models.document import Document
+        from reportkit.renderers.docx_renderer import DocxRenderer
 
         DocxRenderer.render(Document(), path)
         original_size = os.path.getsize(path)

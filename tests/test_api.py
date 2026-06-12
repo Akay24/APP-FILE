@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Generator
+from typing import Any
 
 import pytest
+from flask.testing import FlaskClient
 
-from html2docx.app import create_app
+from reportkit.app import create_app
 
 
 @pytest.fixture()
-def client():
+def client() -> Generator[FlaskClient, None, None]:
     """Create a Flask test client."""
     app = create_app()
     app.config["TESTING"] = True
@@ -21,7 +24,7 @@ def client():
 class TestConvertDocxEndpoint:
     """Tests for POST /convert/docx."""
 
-    def test_convert_simple_html(self, client) -> None:
+    def test_convert_simple_html(self, client: FlaskClient) -> None:
         response = client.post(
             "/convert/docx",
             data=json.dumps({"html": "<h1>Hello</h1>"}),
@@ -29,7 +32,7 @@ class TestConvertDocxEndpoint:
         )
         assert response.status_code == 200
 
-    def test_convert_with_table(self, client) -> None:
+    def test_convert_with_table(self, client: FlaskClient) -> None:
         html = (
             "<table><tr><th>A</th></tr>"
             "<tr><td>1</td></tr></table>"
@@ -41,7 +44,7 @@ class TestConvertDocxEndpoint:
         )
         assert response.status_code == 200
 
-    def test_convert_with_charts(self, client, full_payload: dict) -> None:
+    def test_convert_with_charts(self, client: FlaskClient, full_payload: dict[str, Any]) -> None:
         response = client.post(
             "/convert/docx",
             data=json.dumps(full_payload),
@@ -49,7 +52,7 @@ class TestConvertDocxEndpoint:
         )
         assert response.status_code == 200
 
-    def test_missing_html_returns_400(self, client) -> None:
+    def test_missing_html_returns_400(self, client: FlaskClient) -> None:
         response = client.post(
             "/convert/docx",
             data=json.dumps({"charts": []}),
@@ -59,7 +62,7 @@ class TestConvertDocxEndpoint:
         data = response.get_json()
         assert data["success"] is False
 
-    def test_empty_body_returns_400(self, client) -> None:
+    def test_empty_body_returns_400(self, client: FlaskClient) -> None:
         response = client.post(
             "/convert/docx",
             data="not json",
@@ -67,7 +70,7 @@ class TestConvertDocxEndpoint:
         )
         assert response.status_code == 400
 
-    def test_html_not_string_returns_400(self, client) -> None:
+    def test_html_not_string_returns_400(self, client: FlaskClient) -> None:
         response = client.post(
             "/convert/docx",
             data=json.dumps({"html": 12345}),
@@ -79,7 +82,7 @@ class TestConvertDocxEndpoint:
 class TestConvertPdfEndpoint:
     """Tests for POST /convert/pdf."""
 
-    def test_convert_simple_html(self, client) -> None:
+    def test_convert_simple_html(self, client: FlaskClient) -> None:
         response = client.post(
             "/convert/pdf",
             data=json.dumps({"html": "<h1>Hello PDF</h1>"}),
@@ -87,7 +90,7 @@ class TestConvertPdfEndpoint:
         )
         assert response.status_code == 200
 
-    def test_convert_with_table(self, client) -> None:
+    def test_convert_with_table(self, client: FlaskClient) -> None:
         html = "<table><tr><th>X</th></tr><tr><td>1</td></tr></table>"
         response = client.post(
             "/convert/pdf",
@@ -96,7 +99,7 @@ class TestConvertPdfEndpoint:
         )
         assert response.status_code == 200
 
-    def test_missing_html_returns_400(self, client) -> None:
+    def test_missing_html_returns_400(self, client: FlaskClient) -> None:
         response = client.post(
             "/convert/pdf",
             data=json.dumps({}),
@@ -108,7 +111,7 @@ class TestConvertPdfEndpoint:
 class TestChartJsPayloads:
     """Tests for Chart.js payload handling in API."""
 
-    def test_valid_chartjs_payload(self, client) -> None:
+    def test_valid_chartjs_payload(self, client: FlaskClient) -> None:
         payload = {
             "html": '<h1>Test</h1><div data-chart-id="c1" data-chart-type="bar"></div>',
             "chartjs_payloads": [
@@ -131,7 +134,7 @@ class TestChartJsPayloads:
         )
         assert response.status_code == 200
 
-    def test_invalid_chartjs_payload_returns_400(self, client) -> None:
+    def test_invalid_chartjs_payload_returns_400(self, client: FlaskClient) -> None:
         payload = {
             "html": "<h1>Test</h1>",
             "chartjs_payloads": [

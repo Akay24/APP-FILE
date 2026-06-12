@@ -122,11 +122,11 @@ Converts a Chart.js configuration dict to a `Chart` model.
 
 | Exception | Base | Description |
 |---|---|---|
-| `Html2DocxError` | `Exception` | Base for all html2docx errors |
-| `ConversionError` | `Html2DocxError` | Pipeline failure |
-| `ValidationError` | `Html2DocxError` | Input validation failure |
-| `ParsingError` | `Html2DocxError` | HTML/chart parsing failure |
-| `RenderingError` | `Html2DocxError` | Rendering failure |
+| `ReportKitError` | `Exception` | Base for all reportkit errors |
+| `ConversionError` | `ReportKitError` | Pipeline failure |
+| `ValidationError` | `ReportKitError` | Input validation failure |
+| `ParsingError` | `ReportKitError` | HTML/chart parsing failure |
+| `RenderingError` | `ReportKitError` | Rendering failure |
 
 ---
 

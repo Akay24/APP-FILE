@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from bs4 import BeautifulSoup, Tag
 
-from html2docx.models.chart import Chart
-from html2docx.models.document import Paragraph
-from html2docx.models.table import Table
-from html2docx.parsers.chart_parser import ChartParser
-from html2docx.parsers.html_parser import HtmlParser
-from html2docx.parsers.table_parser import TableParser
+from reportkit.models.chart import Chart
+from reportkit.models.document import Paragraph
+from reportkit.models.table import Table
+from reportkit.parsers.chart_parser import ChartParser
+from reportkit.parsers.html_parser import HtmlParser
+from reportkit.parsers.table_parser import TableParser
 
 
 def _find_tag(html: str, name: str) -> Tag:

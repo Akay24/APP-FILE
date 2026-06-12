@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
-from html2docx.exceptions import ValidationError
-from html2docx.parsers.chartjs_adapter import ChartJsAdapter
+from reportkit.exceptions import ValidationError
+from reportkit.parsers.chartjs_adapter import ChartJsAdapter
 
 
 class TestChartJsAdapter:
     """Tests for ChartJsAdapter.adapt()."""
 
-    def test_adapt_valid_bar_chart(self, sample_chartjs_payload: dict) -> None:
+    def test_adapt_valid_bar_chart(self, sample_chartjs_payload: dict[str, Any]) -> None:
         chart = ChartJsAdapter.adapt(sample_chartjs_payload)
 
         assert chart.chart_id == "jsChart"
