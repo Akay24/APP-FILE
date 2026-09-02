@@ -73,7 +73,9 @@ def sample_chartjs_payload() -> dict[str, Any]:
 
 
 @pytest.fixture()
-def full_payload(sample_html_with_chart: str, sample_charts_data: dict[str, Any]) -> dict[str, Any]:
+def full_payload(
+    sample_html_with_chart: str, sample_charts_data: dict[str, Any]
+) -> dict[str, Any]:
     """Complete API request payload with HTML and charts."""
     return {
         "html": sample_html_with_chart,

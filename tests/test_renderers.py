@@ -214,9 +214,7 @@ class TestConversionService:
         sample_charts_data: dict[str, Any],
     ) -> None:
         path = os.path.join(str(tmp_path), "charts.docx")
-        ConversionService.html_to_docx(
-            sample_html_with_chart, path, sample_charts_data
-        )
+        ConversionService.html_to_docx(sample_html_with_chart, path, sample_charts_data)
         assert os.path.exists(path)
 
     def test_create_temp_output(self) -> None:

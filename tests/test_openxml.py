@@ -124,18 +124,14 @@ class TestOXmlPatcher:
 
     def test_update_content_types_adds_xlsx(self) -> None:
         xml = b'<?xml version="1.0"?><Types></Types>'
-        result = OXmlPatcher._update_content_types(
-            xml, [{"idx": 1, "chart_id": "c1"}]
-        )
+        result = OXmlPatcher._update_content_types(xml, [{"idx": 1, "chart_id": "c1"}])
         content = result.decode("utf-8")
         assert 'Extension="xlsx"' in content
         assert "chart1.xml" in content
 
     def test_update_relationships(self) -> None:
         xml = b'<?xml version="1.0"?><Relationships></Relationships>'
-        result = OXmlPatcher._update_relationships(
-            xml, [{"idx": 1, "chart_id": "c1"}]
-        )
+        result = OXmlPatcher._update_relationships(xml, [{"idx": 1, "chart_id": "c1"}])
         content = result.decode("utf-8")
         assert "rIdChart1" in content
         assert "charts/chart1.xml" in content

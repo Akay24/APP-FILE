@@ -168,9 +168,7 @@ class ConversionService:
         Returns:
             A unique temporary file path.
         """
-        fd, path = tempfile.mkstemp(
-            suffix=f".{format_ext}", prefix="reportkit_"
-        )
+        fd, path = tempfile.mkstemp(suffix=f".{format_ext}", prefix="reportkit_")
         os.close(fd)
         return path
 
@@ -197,6 +195,7 @@ class ConversionService:
         # 3. Check docx2pdf / MS Word (if installed)
         try:
             import docx2pdf  # noqa: F401
+
             if sys.platform == "darwin":
                 res = subprocess.run(
                     ["osascript", "-e", 'id of application "Microsoft Word"'],
@@ -271,6 +270,7 @@ class ConversionService:
         # 3. Try docx2pdf / Microsoft Word
         try:
             import docx2pdf
+
             logger.info("Converting DOCX to PDF via Microsoft Word (docx2pdf)...")
             docx2pdf.convert(abs_docx, abs_pdf)
             return

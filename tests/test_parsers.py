@@ -37,10 +37,7 @@ class TestTableParser:
 
     def test_parse_table_without_headers(self) -> None:
         html = (
-            "<table>"
-            "<tr><td>X</td><td>Y</td></tr>"
-            "<tr><td>1</td><td>2</td></tr>"
-            "</table>"
+            "<table><tr><td>X</td><td>Y</td></tr><tr><td>1</td><td>2</td></tr></table>"
         )
         table = TableParser.parse(_find_tag(html, "table"))
 

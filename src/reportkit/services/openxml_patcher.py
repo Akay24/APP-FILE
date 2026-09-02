@@ -66,17 +66,11 @@ class OXmlPatcher:
                     data = zin.read(item.filename)
 
                     if item.filename == "word/document.xml":
-                        data = OXmlPatcher._update_document_xml(
-                            data, chart_files
-                        )
+                        data = OXmlPatcher._update_document_xml(data, chart_files)
                     elif item.filename == "word/_rels/document.xml.rels":
-                        data = OXmlPatcher._update_relationships(
-                            data, chart_files
-                        )
+                        data = OXmlPatcher._update_relationships(data, chart_files)
                     elif item.filename == "[Content_Types].xml":
-                        data = OXmlPatcher._update_content_types(
-                            data, chart_files
-                        )
+                        data = OXmlPatcher._update_content_types(data, chart_files)
 
                     zout.writestr(item, data)
 
@@ -119,9 +113,7 @@ class OXmlPatcher:
             # Clean up temp file on failure
             if os.path.exists(temp_docx):
                 os.remove(temp_docx)
-            raise RenderingError(
-                f"Chart injection failed: {exc}"
-            ) from exc
+            raise RenderingError(f"Chart injection failed: {exc}") from exc
 
     @staticmethod
     def _update_document_xml(
@@ -215,13 +207,13 @@ class OXmlPatcher:
             f'<wp:extent cx="5486400" cy="3657600"/>'
             f'<wp:docPr id="{doc_pr_id}" name="Chart {chart_idx}"/>'
             f"<wp:cNvGraphicFramePr>"
-            f'<a:graphicFrameLocks '
+            f"<a:graphicFrameLocks "
             f'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
             f'noChangeAspect="1"/>'
             f"</wp:cNvGraphicFramePr>"
             f'<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
             f'<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart">'
-            f'<c:chart '
+            f"<c:chart "
             f'xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" '
             f'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
             f'r:id="rIdChart{chart_idx}"/>'

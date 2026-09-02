@@ -99,7 +99,12 @@ _TABLE_STYLE = TableStyle(
         ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
         ("TOPPADDING", (0, 0), (-1, 0), 8),
         ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#F2F2F2")),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F2F2F2")]),
+        (
+            "ROWBACKGROUNDS",
+            (0, 1),
+            (-1, -1),
+            [colors.white, colors.HexColor("#F2F2F2")],
+        ),
         ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
         ("FONTSIZE", (0, 1), (-1, -1), 9),
         ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#BFBFBF")),
@@ -152,9 +157,7 @@ class PdfRenderer:
 
             for element in document.elements:
                 if isinstance(element, Paragraph):
-                    flowables.extend(
-                        PdfRenderer._render_paragraph(element)
-                    )
+                    flowables.extend(PdfRenderer._render_paragraph(element))
                 elif isinstance(element, Table):
                     flowables.extend(PdfRenderer._render_table(element))
                 elif isinstance(element, Chart):

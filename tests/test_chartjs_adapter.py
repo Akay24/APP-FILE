@@ -13,7 +13,9 @@ from reportkit.parsers.chartjs_adapter import ChartJsAdapter
 class TestChartJsAdapter:
     """Tests for ChartJsAdapter.adapt()."""
 
-    def test_adapt_valid_bar_chart(self, sample_chartjs_payload: dict[str, Any]) -> None:
+    def test_adapt_valid_bar_chart(
+        self, sample_chartjs_payload: dict[str, Any]
+    ) -> None:
         chart = ChartJsAdapter.adapt(sample_chartjs_payload)
 
         assert chart.chart_id == "jsChart"
@@ -127,82 +129,96 @@ class TestChartJsAdapter:
 
     def test_error_missing_type(self) -> None:
         with pytest.raises(ValidationError, match="type"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {"data": {"labels": ["A"], "datasets": []}},
-            })
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {"data": {"labels": ["A"], "datasets": []}},
+                }
+            )
 
     def test_error_unsupported_type(self) -> None:
         with pytest.raises(ValidationError, match="not supported"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {
-                    "type": "radar",
-                    "data": {
-                        "labels": ["A"],
-                        "datasets": [{"label": "S", "data": [1]}],
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {
+                        "type": "radar",
+                        "data": {
+                            "labels": ["A"],
+                            "datasets": [{"label": "S", "data": [1]}],
+                        },
                     },
-                },
-            })
+                }
+            )
 
     def test_error_empty_labels(self) -> None:
         with pytest.raises(ValidationError, match="labels"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {
-                    "type": "bar",
-                    "data": {
-                        "labels": [],
-                        "datasets": [{"label": "S", "data": []}],
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {
+                        "type": "bar",
+                        "data": {
+                            "labels": [],
+                            "datasets": [{"label": "S", "data": []}],
+                        },
                     },
-                },
-            })
+                }
+            )
 
     def test_error_empty_datasets(self) -> None:
         with pytest.raises(ValidationError, match="datasets"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {
-                    "type": "bar",
-                    "data": {"labels": ["A"], "datasets": []},
-                },
-            })
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {
+                        "type": "bar",
+                        "data": {"labels": ["A"], "datasets": []},
+                    },
+                }
+            )
 
     def test_error_mismatched_data_count(self) -> None:
         with pytest.raises(ValidationError, match="values"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {
-                    "type": "bar",
-                    "data": {
-                        "labels": ["A", "B"],
-                        "datasets": [{"label": "S", "data": [1]}],
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {
+                        "type": "bar",
+                        "data": {
+                            "labels": ["A", "B"],
+                            "datasets": [{"label": "S", "data": [1]}],
+                        },
                     },
-                },
-            })
+                }
+            )
 
     def test_error_missing_dataset_label(self) -> None:
         with pytest.raises(ValidationError, match="label"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {
-                    "type": "bar",
-                    "data": {
-                        "labels": ["A"],
-                        "datasets": [{"data": [1]}],
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {
+                        "type": "bar",
+                        "data": {
+                            "labels": ["A"],
+                            "datasets": [{"data": [1]}],
+                        },
                     },
-                },
-            })
+                }
+            )
 
     def test_error_non_numeric_data(self) -> None:
         with pytest.raises(ValidationError, match="non-numeric"):
-            ChartJsAdapter.adapt({
-                "chartId": "x",
-                "chartConfig": {
-                    "type": "bar",
-                    "data": {
-                        "labels": ["A"],
-                        "datasets": [{"label": "S", "data": ["abc"]}],
+            ChartJsAdapter.adapt(
+                {
+                    "chartId": "x",
+                    "chartConfig": {
+                        "type": "bar",
+                        "data": {
+                            "labels": ["A"],
+                            "datasets": [{"label": "S", "data": ["abc"]}],
+                        },
                     },
-                },
-            })
+                }
+            )

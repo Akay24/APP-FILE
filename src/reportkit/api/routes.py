@@ -64,20 +64,24 @@ def create_blueprint() -> Blueprint:
             payload = request.get_json(silent=True)
             if payload is None:
                 return (
-                    jsonify({
-                        "success": False,
-                        "message": "Request body must be valid JSON",
-                    }),
+                    jsonify(
+                        {
+                            "success": False,
+                            "message": "Request body must be valid JSON",
+                        }
+                    ),
                     400,
                 )
 
             html = payload.get("html")
             if not html or not isinstance(html, str):
                 return (
-                    jsonify({
-                        "success": False,
-                        "message": "Field 'html' is required and must be a string",
-                    }),
+                    jsonify(
+                        {
+                            "success": False,
+                            "message": "Field 'html' is required and must be a string",
+                        }
+                    ),
                     400,
                 )
 
@@ -85,9 +89,7 @@ def create_blueprint() -> Blueprint:
             charts_data = _extract_charts_data(payload)
 
             # --- Generate output to a unique temp file ---
-            output_path = ConversionService.create_temp_output(
-                output_format.value
-            )
+            output_path = ConversionService.create_temp_output(output_format.value)
 
             ConversionService.convert(
                 html=html,
@@ -105,28 +107,34 @@ def create_blueprint() -> Blueprint:
         except ValidationError as exc:
             logger.warning("Validation error: %s", exc)
             return (
-                jsonify({
-                    "success": False,
-                    "message": str(exc),
-                }),
+                jsonify(
+                    {
+                        "success": False,
+                        "message": str(exc),
+                    }
+                ),
                 400,
             )
         except ReportKitError as exc:
             logger.error("Conversion error: %s", exc)
             return (
-                jsonify({
-                    "success": False,
-                    "message": "Conversion failed. Check server logs for details.",
-                }),
+                jsonify(
+                    {
+                        "success": False,
+                        "message": "Conversion failed. Check server logs for details.",
+                    }
+                ),
                 500,
             )
         except Exception:
             logger.exception("Unexpected error during conversion")
             return (
-                jsonify({
-                    "success": False,
-                    "message": "Internal server error",
-                }),
+                jsonify(
+                    {
+                        "success": False,
+                        "message": "Internal server error",
+                    }
+                ),
                 500,
             )
         finally:
@@ -136,9 +144,7 @@ def create_blueprint() -> Blueprint:
                 try:
                     os.remove(output_path)
                 except OSError:
-                    logger.warning(
-                        "Failed to clean up temp file: %s", output_path
-                    )
+                    logger.warning("Failed to clean up temp file: %s", output_path)
 
     return bp
 
@@ -174,8 +180,7 @@ def _extract_charts_data(
             "title": chart_model.title,
             "categories": chart_model.categories,
             "series": [
-                {"name": s.name, "values": s.values}
-                for s in chart_model.series
+                {"name": s.name, "values": s.values} for s in chart_model.series
             ],
         }
 

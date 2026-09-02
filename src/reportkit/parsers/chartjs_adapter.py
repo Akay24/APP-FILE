@@ -163,9 +163,7 @@ class ChartJsAdapter:
                 )
 
             try:
-                float_values = [
-                    float(v) if v is not None else 0.0 for v in values
-                ]
+                float_values = [float(v) if v is not None else 0.0 for v in values]
             except (TypeError, ValueError) as exc:
                 raise ValidationError(
                     f"Dataset {idx} ('{label}') contains non-numeric values"

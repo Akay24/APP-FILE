@@ -33,10 +33,7 @@ class TestConvertDocxEndpoint:
         assert response.status_code == 200
 
     def test_convert_with_table(self, client: FlaskClient) -> None:
-        html = (
-            "<table><tr><th>A</th></tr>"
-            "<tr><td>1</td></tr></table>"
-        )
+        html = "<table><tr><th>A</th></tr><tr><td>1</td></tr></table>"
         response = client.post(
             "/convert/docx",
             data=json.dumps({"html": html}),
@@ -44,7 +41,9 @@ class TestConvertDocxEndpoint:
         )
         assert response.status_code == 200
 
-    def test_convert_with_charts(self, client: FlaskClient, full_payload: dict[str, Any]) -> None:
+    def test_convert_with_charts(
+        self, client: FlaskClient, full_payload: dict[str, Any]
+    ) -> None:
         response = client.post(
             "/convert/docx",
             data=json.dumps(full_payload),

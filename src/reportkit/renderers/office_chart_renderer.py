@@ -65,9 +65,7 @@ class OfficeChartRenderer:
                 col_letter = index_to_column(col_idx)
                 value_idx = row_idx - 2
                 ws[f"{col_letter}{row_idx}"] = (
-                    series.values[value_idx]
-                    if value_idx < len(series.values)
-                    else 0.0
+                    series.values[value_idx] if value_idx < len(series.values) else 0.0
                 )
 
         # Column widths
@@ -91,14 +89,10 @@ class OfficeChartRenderer:
             raise ValidationError("Chart ID is required")
 
         if not chart_model.categories:
-            raise ValidationError(
-                f"Chart '{chart_model.chart_id}' has no categories"
-            )
+            raise ValidationError(f"Chart '{chart_model.chart_id}' has no categories")
 
         if not chart_model.series:
-            raise ValidationError(
-                f"Chart '{chart_model.chart_id}' has no series"
-            )
+            raise ValidationError(f"Chart '{chart_model.chart_id}' has no series")
 
         category_count = len(chart_model.categories)
         for series in chart_model.series:

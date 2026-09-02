@@ -271,9 +271,7 @@ class DocxRenderer:
                 with zipfile.ZipFile(temp_pptx, "r") as z:
                     excel_sheet_path: str | None = None
                     for fname in z.namelist():
-                        if fname.startswith(
-                            "ppt/embeddings/Microsoft_Excel_"
-                        ):
+                        if fname.startswith("ppt/embeddings/Microsoft_Excel_"):
                             excel_sheet_path = fname
                             break
 
